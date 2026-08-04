@@ -44,6 +44,7 @@ function ProgramList() {
                     return (
                         <div
                             key={p.id}
+                            onClick={() => navigate(`/programs/${p.id}`)}
                             style={{
                                 background: 'var(--color-surface)',
                                 border: '1px solid var(--color-border)',
@@ -79,8 +80,8 @@ function ProgramList() {
                                 >
                                     {STATUS_LABELS[p.status]}
                                 </span>
-                                <button onClick={() => navigate(`/programs/${p.id}/edit`)}>Modifier</button>
-                                <button onClick={() => handleDelete(p.id)}>Supprimer</button>
+                                <button onClick={(e) => { e.stopPropagation(); navigate(`/programs/${p.id}/edit`); }}>Modifier</button>
+                                <button onClick={(e) => { e.stopPropagation(); handleDelete(p.id); }}>Supprimer</button>
                             </div>
                         </div>
                     );

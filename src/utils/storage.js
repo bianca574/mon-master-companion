@@ -82,6 +82,53 @@ function deleteProgram(id) {
   return updated;
 }
 
+function addDocument(programId, label) {
+  const programs = loadPrograms();
+  const updated = programs.map((p) =>
+    p.id === programId
+      ? {
+          ...p,
+          documents: [...p.documents, { id: generateId(), label, done: false }],
+          updatedAt: new Date().toISOString(),
+        }
+      : p
+  );
+  savePrograms(updated);
+  return updated;
+}
+
+function toggleDocument(programId, docId) {
+  const programs = loadPrograms();
+  const updated = programs.map((p) =>
+    p.id === programId
+      ? {
+          ...p,
+          documents: p.documents.map((d) =>
+            d.id === docId ? { ...d, done: !d.done } : d
+          ),
+          updatedAt: new Date().toISOString(),
+        }
+      : p
+  );
+  savePrograms(updated);
+  return updated;
+}
+
+function removeDocument(programId, docId) {
+  const programs = loadPrograms();
+  const updated = programs.map((p) =>
+    p.id === programId
+      ? {
+          ...p,
+          documents: p.documents.filter((d) => d.id !== docId),
+          updatedAt: new Date().toISOString(),
+        }
+      : p
+  );
+  savePrograms(updated);
+  return updated;
+}
+
 export {
   loadPrograms,
   savePrograms,
@@ -90,4 +137,7 @@ export {
   updateProgram,
   deleteProgram,
   generateId,
+  addDocument,
+  toggleDocument,
+  removeDocument
 };
