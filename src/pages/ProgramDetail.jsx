@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { loadPrograms, addDocument, toggleDocument, removeDocument } from '../utils/storage';
 import { STATUS_LABELS, STATUS_COLORS } from '../utils/constants';
@@ -6,17 +6,13 @@ import { STATUS_LABELS, STATUS_COLORS } from '../utils/constants';
 function ProgramDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [program, setProgram] = useState(null);
+    const [program, setProgram] = useState(() => loadPrograms().find((p) => p.id === id) || null);
     const [newDoc, setNewDoc] = useState('');
 
     function refresh() {
         const found = loadPrograms().find((p) => p.id === id);
         setProgram(found || null);
     }
-
-    useEffect(() => {
-        refresh();
-    }, [id]);
 
     if (!program) {
         return (

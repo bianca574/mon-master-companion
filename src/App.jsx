@@ -9,6 +9,11 @@ function ProgramFormRoute() {
   return <ProgramForm key={id ?? 'new'} />;
 }
 
+function ProgramDetailRoute() {
+  const { id } = useParams();
+  return <ProgramDetail key={id} />;
+}
+
 function App() {
   const [theme, setTheme] = useState(() => localStorage.getItem('monmaster_theme') || 'light');
 
@@ -36,7 +41,7 @@ function App() {
         <Route path="/" element={<ProgramList />} />
         <Route path="/programs/new" element={<ProgramFormRoute />} />
         <Route path="/programs/:id/edit" element={<ProgramFormRoute />} />
-        <Route path="/programs/:id" element={<ProgramDetail />} />
+        <Route path="/programs/:id" element={<ProgramDetailRoute />} />
       </Routes>
     </BrowserRouter>
   );
