@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Nunito+Sans:wght@400;600;700&display=swap');
+
+:root {
+  --color-primary: #1D9E75;
+  --color-primary-dark: #0F6E56;
+  --color-secondary: #D4537E;
+  --color-secondary-dark: #993556;
+
+  --color-bg: #FAFDFB;
+  --color-surface: #FFFFFF;
+  --color-border: #9FE1CB;
+
+  --color-text: #04342C;
+  --color-text-secondary: #5F5E5A;
+
+  --color-status-ok: #1D9E75;
+  --color-status-soon: #BA7517;
+  --color-status-urgent: #D4537E;
+
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-pill: 999px;
+
+  --font-heading: 'Baloo 2', sans-serif;
+  --font-body: 'Nunito Sans', sans-serif;
+}
+
+[data-theme='dark'] {
+  --color-primary: #5DCAA5;
+  --color-primary-dark: #9FE1CB;
+  --color-secondary: #ED93B1;
+  --color-secondary-dark: #F4C0D1;
+
+  --color-bg: #0B211C;
+  --color-surface: #123128;
+  --color-border: #0F6E56;
+
+  --color-text: #F1EFE8;
+  --color-text-secondary: #B4B2A9;
+
+  --color-status-ok: #5DCAA5;
+  --color-status-soon: #FAC775;
+  --color-status-urgent: #ED93B1;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  margin: 0;
+}
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+}
