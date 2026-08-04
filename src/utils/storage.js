@@ -42,12 +42,12 @@ function savePrograms(programs) {
   }
 }
 
-function createProgram({ university, programName }) {
+function createProgram(fields) {
   const now = new Date().toISOString();
   return {
     id: generateId(),
-    university,
-    programName,
+    university: '',
+    programName: '',
     status: 'not_started',
     deadline: null,
     website: '',
@@ -55,6 +55,7 @@ function createProgram({ university, programName }) {
     notes: '',
     createdAt: now,
     updatedAt: now,
+    ...fields,
   };
 }
 
