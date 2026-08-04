@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useParams } from 'react-router-dom';
 import ProgramList from './pages/ProgramList';
 import ProgramForm from './pages/ProgramForm';
 
@@ -15,6 +15,11 @@ function App() {
     setTheme((t) => (t === 'light' ? 'dark' : 'light'));
   }
 
+  function ProgramFormRoute() {
+    const { id } = useParams();
+    return <ProgramForm key={id ?? 'new'} />;
+  }
+
   return (
     <BrowserRouter>
       <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '1rem 2rem 0' }}>
@@ -28,8 +33,8 @@ function App() {
 
       <Routes>
         <Route path="/" element={<ProgramList />} />
-        <Route path="/programs/new" element={<ProgramForm />} />
-        <Route path="/programs/:id/edit" element={<ProgramForm />} />
+        <Route path="/programs/new" element={<ProgramFormRoute />} />
+        <Route path="/programs/:id/edit" element={<ProgramFormRoute />} />
       </Routes>
     </BrowserRouter>
   );

@@ -16,23 +16,23 @@ function ProgramForm() {
     const { id } = useParams();
     const isEditing = Boolean(id);
     const navigate = useNavigate();
-    const [form, setForm] = useState(EMPTY_FORM);
 
-    useEffect(() => {
+    const [form, setForm] = useState(() => {
         if (isEditing) {
             const existing = loadPrograms().find((p) => p.id === id);
             if (existing) {
-                setForm({
+                return {
                     university: existing.university,
                     programName: existing.programName,
                     status: existing.status,
                     deadline: existing.deadline || '',
                     website: existing.website,
                     notes: existing.notes,
-                });
+                };
             }
         }
-    }, [id, isEditing]);
+        return EMPTY_FORM;
+    });
 
     function handleChange(field, value) {
         setForm((f) => ({ ...f, [field]: value }));

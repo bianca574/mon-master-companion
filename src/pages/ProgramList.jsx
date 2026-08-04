@@ -4,12 +4,8 @@ import { loadPrograms, deleteProgram } from '../utils/storage';
 import { STATUS_LABELS, STATUS_COLORS } from '../utils/constants';
 
 function ProgramList() {
-    const [programs, setPrograms] = useState([]);
+    const [programs, setPrograms] = useState(() => loadPrograms());
     const navigate = useNavigate();
-
-    useEffect(() => {
-        setPrograms(loadPrograms());
-    }, []);
 
     function handleDelete(id) {
         if (confirm('Supprimer cette candidature ?')) {
