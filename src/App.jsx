@@ -2,6 +2,12 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, useParams } from 'react-router-dom';
 import ProgramList from './pages/ProgramList';
 import ProgramForm from './pages/ProgramForm';
+import ProgramDetail from './pages/ProgramDetail';
+
+function ProgramFormRoute() {
+  const { id } = useParams();
+  return <ProgramForm key={id ?? 'new'} />;
+}
 
 function App() {
   const [theme, setTheme] = useState(() => localStorage.getItem('monmaster_theme') || 'light');
@@ -13,11 +19,6 @@ function App() {
 
   function toggleTheme() {
     setTheme((t) => (t === 'light' ? 'dark' : 'light'));
-  }
-
-  function ProgramFormRoute() {
-    const { id } = useParams();
-    return <ProgramForm key={id ?? 'new'} />;
   }
 
   return (
@@ -35,6 +36,7 @@ function App() {
         <Route path="/" element={<ProgramList />} />
         <Route path="/programs/new" element={<ProgramFormRoute />} />
         <Route path="/programs/:id/edit" element={<ProgramFormRoute />} />
+        <Route path="/programs/:id" element={<ProgramDetail />} />
       </Routes>
     </BrowserRouter>
   );

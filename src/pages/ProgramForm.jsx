@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createProgram, addProgram, updateProgram, loadPrograms } from '../utils/storage';
 import { STATUS_LABELS } from '../utils/constants';
