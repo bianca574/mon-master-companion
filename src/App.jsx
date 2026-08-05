@@ -4,6 +4,8 @@ import Dashboard from './pages/Dashboard';
 import ProgramList from './pages/ProgramList';
 import ProgramForm from './pages/ProgramForm';
 import ProgramDetail from './pages/ProgramDetail';
+import RecommendationList from './pages/RecommendationList';
+import RecommendationForm from './pages/RecommendationForm';
 
 function ProgramFormRoute() {
   const { id } = useParams();
@@ -13,6 +15,11 @@ function ProgramFormRoute() {
 function ProgramDetailRoute() {
   const { id } = useParams();
   return <ProgramDetail key={id} />;
+}
+
+function RecommendationFormRoute() {
+  const { id } = useParams();
+  return <RecommendationForm key={id ?? 'new'} />;
 }
 
 function App() {
@@ -33,6 +40,7 @@ function App() {
         <div style={{ display: 'flex', gap: '1rem' }}>
           <Link to="/" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Tableau de bord</Link>
           <Link to="/programs" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Candidatures</Link>
+          <Link to="/recommendations" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Recommandations</Link>
         </div>
         <button
           onClick={toggleTheme}
@@ -48,6 +56,9 @@ function App() {
         <Route path="/programs/new" element={<ProgramFormRoute />} />
         <Route path="/programs/:id/edit" element={<ProgramFormRoute />} />
         <Route path="/programs/:id" element={<ProgramDetailRoute />} />
+        <Route path="/recommendations" element={<RecommendationList />} />
+        <Route path="/recommendations/new" element={<RecommendationFormRoute />} />
+        <Route path="/recommendations/:id/edit" element={<RecommendationFormRoute />} />
       </Routes>
     </BrowserRouter>
   );

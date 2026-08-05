@@ -129,6 +129,77 @@ function removeDocument(programId, docId) {
   return updated;
 }
 
+const RECOMMENDATION_KEY = 'monmaster_recommendations';
+
+// Recommendation shape:
+// {
+//   id, name, institution,
+//   status: 'not_asked' | 'asked' | 'confirmed' | 'received',
+//   programIds: string[],   // linked programs, can be empty (general)
+//   askedDate: string | null,
+//   notes: string,
+//   createdAt, updatedAt,
+// }
+
+function loadRecommendations() {
+  try {
+    const raw = localStorage.getItem(RECOMMENDATION_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (err) {
+    console.error('Failed to load recommendations', err);
+    return [];
+  }
+}
+
+function saveRecommendations(list) {
+  try {
+    localStorage.setItem(RECOMMENDATION_KEY, JSON.stringify(list));
+    return true;
+  } catch (err) {
+    console.error('Failed to save recommendations', err);
+    return false;
+  }
+}
+
+function createRecommendation(fields) {
+  const now = new Date().toISOString();
+  return {
+    id: generateId(),
+    name: '',
+    institution: '',
+    status: 'not_asked',
+    programIds: [],
+    askedDate: null,
+    notes: '',
+    createdAt: now,
+    updatedAt: now,
+    ...fields,
+  };
+}
+
+function addRecommendation(rec) {
+  const list = loadRecommendations();
+  const updated = [...list, rec];
+  saveRecommendations(updated);
+  return updated;
+}
+
+function updateRecommendation(id, changes) {
+  const list = loadRecommendations();
+  const updated = list.map((r) =>
+    r.id === id ? { ...r, ...changes, updatedAt: new Date().toISOString() } : r
+  );
+  saveRecommendations(updated);
+  return updated;
+}
+
+function deleteRecommendation(id) {
+  const list = loadRecommendations();
+  const updated = list.filter((r) => r.id !== id);
+  saveRecommendations(updated);
+  return updated;
+}
+
 export {
   loadPrograms,
   savePrograms,
@@ -139,5 +210,11 @@ export {
   generateId,
   addDocument,
   toggleDocument,
-  removeDocument
+  removeDocument,
+  loadRecommendations,
+  saveRecommendations,
+  createRecommendation,
+  addRecommendation,
+  updateRecommendation,
+  deleteRecommendation
 };
