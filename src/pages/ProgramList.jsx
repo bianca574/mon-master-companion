@@ -38,7 +38,7 @@ function ProgramList() {
                 </p>
             )}
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', cursor: 'pointer' }}>
                 {programs.map((p) => {
                     const color = STATUS_COLORS[p.status];
                     return (

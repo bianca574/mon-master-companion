@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, useParams } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, useParams } from 'react-router-dom';
+import Dashboard from './pages/Dashboard';
 import ProgramList from './pages/ProgramList';
 import ProgramForm from './pages/ProgramForm';
 import ProgramDetail from './pages/ProgramDetail';
@@ -28,7 +29,11 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '1rem 2rem 0' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 2rem 0' }}>
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          <Link to="/" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Tableau de bord</Link>
+          <Link to="/programs" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Candidatures</Link>
+        </div>
         <button
           onClick={toggleTheme}
           style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-pill)', padding: '0.4rem 0.9rem', color: 'var(--color-text)' }}
@@ -38,7 +43,8 @@ function App() {
       </div>
 
       <Routes>
-        <Route path="/" element={<ProgramList />} />
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/programs" element={<ProgramList />} />
         <Route path="/programs/new" element={<ProgramFormRoute />} />
         <Route path="/programs/:id/edit" element={<ProgramFormRoute />} />
         <Route path="/programs/:id" element={<ProgramDetailRoute />} />
