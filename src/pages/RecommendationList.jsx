@@ -10,9 +10,12 @@ function RecommendationList() {
 
     function programNames(ids) {
         return ids
-            .map((id) => programs.find((p) => p.id === id)?.university)
+            .map((id) => {
+                const p = programs.find((p) => p.id === id);
+                return p ? `${p.programName}, ${p.university}` : null;
+            })
             .filter(Boolean)
-            .join(', ');
+            .join(' & ');
     }
 
     function handleDelete(id) {

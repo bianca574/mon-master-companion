@@ -6,6 +6,7 @@ import ProgramForm from './pages/ProgramForm';
 import ProgramDetail from './pages/ProgramDetail';
 import RecommendationList from './pages/RecommendationList';
 import RecommendationForm from './pages/RecommendationForm';
+import DecisionHelper from './pages/DecisionHelper';
 
 function ProgramFormRoute() {
   const { id } = useParams();
@@ -41,6 +42,7 @@ function App() {
           <Link to="/" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Tableau de bord</Link>
           <Link to="/programs" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Candidatures</Link>
           <Link to="/recommendations" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Recommandations</Link>
+          <Link to="/decision" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Décision</Link>
         </div>
         <button
           onClick={toggleTheme}
@@ -59,6 +61,7 @@ function App() {
         <Route path="/recommendations" element={<RecommendationList />} />
         <Route path="/recommendations/new" element={<RecommendationFormRoute />} />
         <Route path="/recommendations/:id/edit" element={<RecommendationFormRoute />} />
+        <Route path="/decision" element={<DecisionHelper />} />
       </Routes>
     </BrowserRouter>
   );

@@ -52,6 +52,7 @@ function createProgram(fields) {
     deadline: null,
     website: '',
     documents: [],
+    scores: {},
     notes: '',
     createdAt: now,
     updatedAt: now,
@@ -200,6 +201,63 @@ function deleteRecommendation(id) {
   return updated;
 }
 
+const CRITERIA_KEY = 'monmaster_criteria';
+
+// Criterion shape: { id, name, weight }  (weight in %, e.g. 30)
+
+function loadCriteria() {
+  try {
+    const raw = localStorage.getItem(CRITERIA_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (err) {
+    console.error('Failed to load criteria', err);
+    return [];
+  }
+}
+
+function saveCriteria(list) {
+  try {
+    localStorage.setItem(CRITERIA_KEY, JSON.stringify(list));
+    return true;
+  } catch (err) {
+    console.error('Failed to save criteria', err);
+    return false;
+  }
+}
+
+function createCriterion(fields) {
+  return { id: generateId(), name: '', weight: 10, ...fields };
+}
+
+function addCriterion(criterion) {
+  const list = [...loadCriteria(), criterion];
+  saveCriteria(list);
+  return list;
+}
+
+function updateCriterion(id, changes) {
+  const list = loadCriteria().map((c) => (c.id === id ? { ...c, ...changes } : c));
+  saveCriteria(list);
+  return list;
+}
+
+function deleteCriterion(id) {
+  const list = loadCriteria().filter((c) => c.id !== id);
+  saveCriteria(list);
+  return list;
+}
+
+function updateProgramScore(programId, criteriaId, score) {
+  const programs = loadPrograms();
+  const updated = programs.map((p) =>
+    p.id === programId
+      ? { ...p, scores: { ...p.scores, [criteriaId]: score }, updatedAt: new Date().toISOString() }
+      : p
+  );
+  savePrograms(updated);
+  return updated;
+}
+
 export {
   loadPrograms,
   savePrograms,
@@ -216,5 +274,12 @@ export {
   createRecommendation,
   addRecommendation,
   updateRecommendation,
-  deleteRecommendation
+  deleteRecommendation,
+  loadCriteria,
+  saveCriteria,
+  createCriterion,
+  addCriterion,
+  updateCriterion,
+  deleteCriterion,
+  updateProgramScore
 };
