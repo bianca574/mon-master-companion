@@ -314,6 +314,31 @@ function getLettersForProgram(programId) {
     .sort((a, b) => b.versionNumber - a.versionNumber);
 }
 
+const ALL_KEYS = {
+  programs: 'monmaster_programs',
+  recommendations: 'monmaster_recommendations',
+  criteria: 'monmaster_criteria',
+  letters: 'monmaster_letters',
+};
+
+function exportAllData() {
+  const data = {};
+  for (const [key, storageKey] of Object.entries(ALL_KEYS)) {
+    const raw = localStorage.getItem(storageKey);
+    data[key] = raw ? JSON.parse(raw) : [];
+  }
+  data.exportedAt = new Date().toISOString();
+  return data;
+}
+
+function importAllData(data) {
+  for (const [key, storageKey] of Object.entries(ALL_KEYS)) {
+    if (Array.isArray(data[key])) {
+      localStorage.setItem(storageKey, JSON.stringify(data[key]));
+    }
+  }
+}
+
 export {
   loadPrograms,
   savePrograms,
@@ -342,5 +367,7 @@ export {
   saveLetters,
   addLetterVersion,
   deleteLetterVersion,
-  getLettersForProgram
+  getLettersForProgram,
+  exportAllData,
+  importAllData
 };
