@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { loadPrograms, loadLetters, addLetterVersion, deleteLetterVersion, getLettersForProgram } from '../utils/storage';
+import { loadPrograms, addLetterVersion, deleteLetterVersion, getLettersForProgram } from '../utils/storage';
 
 function LetterManager() {
     const [programs] = useState(() => loadPrograms());
