@@ -52,6 +52,7 @@ function createProgram(fields) {
     deadline: null,
     website: '',
     documents: [],
+    scores: {},
     notes: '',
     createdAt: now,
     updatedAt: now,
@@ -129,6 +130,215 @@ function removeDocument(programId, docId) {
   return updated;
 }
 
+const RECOMMENDATION_KEY = 'monmaster_recommendations';
+
+// Recommendation shape:
+// {
+//   id, name, institution,
+//   status: 'not_asked' | 'asked' | 'confirmed' | 'received',
+//   programIds: string[],   // linked programs, can be empty (general)
+//   askedDate: string | null,
+//   notes: string,
+//   createdAt, updatedAt,
+// }
+
+function loadRecommendations() {
+  try {
+    const raw = localStorage.getItem(RECOMMENDATION_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (err) {
+    console.error('Failed to load recommendations', err);
+    return [];
+  }
+}
+
+function saveRecommendations(list) {
+  try {
+    localStorage.setItem(RECOMMENDATION_KEY, JSON.stringify(list));
+    return true;
+  } catch (err) {
+    console.error('Failed to save recommendations', err);
+    return false;
+  }
+}
+
+function createRecommendation(fields) {
+  const now = new Date().toISOString();
+  return {
+    id: generateId(),
+    name: '',
+    institution: '',
+    status: 'not_asked',
+    programIds: [],
+    askedDate: null,
+    notes: '',
+    createdAt: now,
+    updatedAt: now,
+    ...fields,
+  };
+}
+
+function addRecommendation(rec) {
+  const list = loadRecommendations();
+  const updated = [...list, rec];
+  saveRecommendations(updated);
+  return updated;
+}
+
+function updateRecommendation(id, changes) {
+  const list = loadRecommendations();
+  const updated = list.map((r) =>
+    r.id === id ? { ...r, ...changes, updatedAt: new Date().toISOString() } : r
+  );
+  saveRecommendations(updated);
+  return updated;
+}
+
+function deleteRecommendation(id) {
+  const list = loadRecommendations();
+  const updated = list.filter((r) => r.id !== id);
+  saveRecommendations(updated);
+  return updated;
+}
+
+const CRITERIA_KEY = 'monmaster_criteria';
+
+// Criterion shape: { id, name, weight }  (weight in %, e.g. 30)
+
+function loadCriteria() {
+  try {
+    const raw = localStorage.getItem(CRITERIA_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (err) {
+    console.error('Failed to load criteria', err);
+    return [];
+  }
+}
+
+function saveCriteria(list) {
+  try {
+    localStorage.setItem(CRITERIA_KEY, JSON.stringify(list));
+    return true;
+  } catch (err) {
+    console.error('Failed to save criteria', err);
+    return false;
+  }
+}
+
+function createCriterion(fields) {
+  return { id: generateId(), name: '', weight: 10, ...fields };
+}
+
+function addCriterion(criterion) {
+  const list = [...loadCriteria(), criterion];
+  saveCriteria(list);
+  return list;
+}
+
+function updateCriterion(id, changes) {
+  const list = loadCriteria().map((c) => (c.id === id ? { ...c, ...changes } : c));
+  saveCriteria(list);
+  return list;
+}
+
+function deleteCriterion(id) {
+  const list = loadCriteria().filter((c) => c.id !== id);
+  saveCriteria(list);
+  return list;
+}
+
+function updateProgramScore(programId, criteriaId, score) {
+  const programs = loadPrograms();
+  const updated = programs.map((p) =>
+    p.id === programId
+      ? { ...p, scores: { ...p.scores, [criteriaId]: score }, updatedAt: new Date().toISOString() }
+      : p
+  );
+  savePrograms(updated);
+  return updated;
+}
+const LETTER_KEY = 'monmaster_letters';
+
+// Letter version shape:
+// { id, programId, versionNumber, content, createdAt }
+
+function loadLetters() {
+  try {
+    const raw = localStorage.getItem(LETTER_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (err) {
+    console.error('Failed to load letters', err);
+    return [];
+  }
+}
+
+function saveLetters(list) {
+  try {
+    localStorage.setItem(LETTER_KEY, JSON.stringify(list));
+    return true;
+  } catch (err) {
+    console.error('Failed to save letters', err);
+    return false;
+  }
+}
+
+function addLetterVersion(programId, content) {
+  const all = loadLetters();
+  const existingForProgram = all.filter((l) => l.programId === programId);
+  const nextVersion = existingForProgram.length
+    ? Math.max(...existingForProgram.map((l) => l.versionNumber)) + 1
+    : 1;
+
+  const newLetter = {
+    id: generateId(),
+    programId,
+    versionNumber: nextVersion,
+    content,
+    createdAt: new Date().toISOString(),
+  };
+
+  const updated = [...all, newLetter];
+  saveLetters(updated);
+  return updated;
+}
+
+function deleteLetterVersion(id) {
+  const updated = loadLetters().filter((l) => l.id !== id);
+  saveLetters(updated);
+  return updated;
+}
+
+function getLettersForProgram(programId) {
+  return loadLetters()
+    .filter((l) => l.programId === programId)
+    .sort((a, b) => b.versionNumber - a.versionNumber);
+}
+
+const ALL_KEYS = {
+  programs: 'monmaster_programs',
+  recommendations: 'monmaster_recommendations',
+  criteria: 'monmaster_criteria',
+  letters: 'monmaster_letters',
+};
+
+function exportAllData() {
+  const data = {};
+  for (const [key, storageKey] of Object.entries(ALL_KEYS)) {
+    const raw = localStorage.getItem(storageKey);
+    data[key] = raw ? JSON.parse(raw) : [];
+  }
+  data.exportedAt = new Date().toISOString();
+  return data;
+}
+
+function importAllData(data) {
+  for (const [key, storageKey] of Object.entries(ALL_KEYS)) {
+    if (Array.isArray(data[key])) {
+      localStorage.setItem(storageKey, JSON.stringify(data[key]));
+    }
+  }
+}
+
 export {
   loadPrograms,
   savePrograms,
@@ -139,5 +349,25 @@ export {
   generateId,
   addDocument,
   toggleDocument,
-  removeDocument
+  removeDocument,
+  loadRecommendations,
+  saveRecommendations,
+  createRecommendation,
+  addRecommendation,
+  updateRecommendation,
+  deleteRecommendation,
+  loadCriteria,
+  saveCriteria,
+  createCriterion,
+  addCriterion,
+  updateCriterion,
+  deleteCriterion,
+  updateProgramScore,
+  loadLetters,
+  saveLetters,
+  addLetterVersion,
+  deleteLetterVersion,
+  getLettersForProgram,
+  exportAllData,
+  importAllData
 };

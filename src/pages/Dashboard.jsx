@@ -76,7 +76,7 @@ function Dashboard() {
                             }}
                         >
                             <div>
-                                <div style={{ fontWeight: 600 }}>{p.university}</div>
+                                <div style={{ fontWeight: 600 }}>{p.programName}, {p.university}</div>
                                 <div style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
                                     {new Date(p.deadline).toLocaleDateString('fr-FR')}
                                 </div>

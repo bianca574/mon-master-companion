@@ -91,7 +91,7 @@ function ProgramForm() {
                     <button type="submit" style={{ background: 'var(--color-primary)', color: '#fff', border: 'none', borderRadius: 'var(--radius-pill)', padding: '0.6rem 1.2rem', fontWeight: 600 }}>
                         Enregistrer
                     </button>
-                    <button type="button" onClick={() => navigate('/')}>Annuler</button>
+                    <button type="button" onClick={() => navigate('/programs')}>Annuler</button>
                 </div>
             </form>
         </div>

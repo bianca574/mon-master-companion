@@ -15,3 +15,17 @@ export const STATUS_COLORS = {
     accepted: { bg: 'var(--color-primary-dark)', text: '#FFFFFF' },
     rejected: { bg: 'var(--color-secondary)', text: '#FFFFFF' },
 };
+
+export const REC_STATUS_LABELS = {
+    not_asked: 'Pas encore demandé',
+    asked: 'Demandé',
+    confirmed: 'Confirmé',
+    received: 'Reçue',
+};
+  
+  export const REC_STATUS_COLORS = {
+    not_asked: { bg: 'var(--color-border)', text: 'var(--color-text-secondary)' },
+    asked: { bg: 'var(--color-status-soon)', text: '#fff' },
+    confirmed: { bg: 'var(--color-primary)', text: '#fff' },
+    received: { bg: 'var(--color-primary-dark)', text: '#fff' },
+};
