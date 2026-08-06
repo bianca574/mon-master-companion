@@ -257,6 +257,62 @@ function updateProgramScore(programId, criteriaId, score) {
   savePrograms(updated);
   return updated;
 }
+const LETTER_KEY = 'monmaster_letters';
+
+// Letter version shape:
+// { id, programId, versionNumber, content, createdAt }
+
+function loadLetters() {
+  try {
+    const raw = localStorage.getItem(LETTER_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (err) {
+    console.error('Failed to load letters', err);
+    return [];
+  }
+}
+
+function saveLetters(list) {
+  try {
+    localStorage.setItem(LETTER_KEY, JSON.stringify(list));
+    return true;
+  } catch (err) {
+    console.error('Failed to save letters', err);
+    return false;
+  }
+}
+
+function addLetterVersion(programId, content) {
+  const all = loadLetters();
+  const existingForProgram = all.filter((l) => l.programId === programId);
+  const nextVersion = existingForProgram.length
+    ? Math.max(...existingForProgram.map((l) => l.versionNumber)) + 1
+    : 1;
+
+  const newLetter = {
+    id: generateId(),
+    programId,
+    versionNumber: nextVersion,
+    content,
+    createdAt: new Date().toISOString(),
+  };
+
+  const updated = [...all, newLetter];
+  saveLetters(updated);
+  return updated;
+}
+
+function deleteLetterVersion(id) {
+  const updated = loadLetters().filter((l) => l.id !== id);
+  saveLetters(updated);
+  return updated;
+}
+
+function getLettersForProgram(programId) {
+  return loadLetters()
+    .filter((l) => l.programId === programId)
+    .sort((a, b) => b.versionNumber - a.versionNumber);
+}
 
 export {
   loadPrograms,
@@ -281,5 +337,10 @@ export {
   addCriterion,
   updateCriterion,
   deleteCriterion,
-  updateProgramScore
+  updateProgramScore,
+  loadLetters,
+  saveLetters,
+  addLetterVersion,
+  deleteLetterVersion,
+  getLettersForProgram
 };
