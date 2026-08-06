@@ -4,13 +4,13 @@ import { loadPrograms, loadLetters, addLetterVersion, deleteLetterVersion, getLe
 function LetterManager() {
     const [programs] = useState(() => loadPrograms());
     const [selectedProgramId, setSelectedProgramId] = useState(programs[0]?.id || '');
-    const [letters, setLetters] = useState(() => loadLetters());
+    const [, setRefreshTick] = useState(0);
     const [draft, setDraft] = useState('');
 
     const versions = getLettersForProgram(selectedProgramId);
 
     function refresh() {
-        setLetters(loadLetters());
+        setRefreshTick((t) => t + 1);
     }
 
     function handleSave() {
