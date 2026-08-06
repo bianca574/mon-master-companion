@@ -7,9 +7,7 @@ function LetterManager() {
     const [letters, setLetters] = useState(() => loadLetters());
     const [draft, setDraft] = useState('');
 
-    const versions = letters
-        .filter((l) => l.programId === selectedProgramId)
-        .sort((a, b) => b.versionNumber - a.versionNumber);
+    const versions = getLettersForProgram(selectedProgramId);
 
     function refresh() {
         setLetters(loadLetters());
@@ -78,7 +76,7 @@ function LetterManager() {
                         <p style={{ color: 'var(--color-text-secondary)' }}>Aucune version pour cette candidature.</p>
                     )}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                        {versions.map((v, i) => (
+                        {versions.map((v) => (
                             <details
                                 key={v.id}
                                 style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem' }}
