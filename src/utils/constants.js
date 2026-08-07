@@ -29,3 +29,21 @@ export const REC_STATUS_LABELS = {
     confirmed: { bg: 'var(--color-primary)', text: '#fff' },
     received: { bg: 'var(--color-primary-dark)', text: '#fff' },
 };
+
+export const PREDEFINED_TAGS = [
+    '🎓 Formation continue',
+    '🎓 Formation initiale',
+    '🏢 Alternance - Apprentissage',
+    '🔬 Recherche',
+    '💻 Génie logiciel',
+    '🤖 IA',
+    '🌐 Réseaux',
+    '📊 Data Science',
+    '🔐 Cybersécurité',
+    '☁️ Cloud',
+    '📍 Paris',
+    '📍 Hors Paris',
+    '⭐ Dream School',
+    '🦺 Safety',
+    '✅ Applied',
+  ];

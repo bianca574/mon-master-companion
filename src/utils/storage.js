@@ -53,6 +53,7 @@ function createProgram(fields) {
     website: '',
     documents: [],
     scores: {},
+    tags: [],
     notes: '',
     createdAt: now,
     updatedAt: now,

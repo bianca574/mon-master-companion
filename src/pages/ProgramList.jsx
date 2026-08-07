@@ -1,11 +1,24 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadPrograms, deleteProgram } from '../utils/storage';
-import { STATUS_LABELS, STATUS_COLORS } from '../utils/constants';
+import { STATUS_LABELS, STATUS_COLORS, PREDEFINED_TAGS } from '../utils/constants';
 
 function ProgramList() {
     const [programs, setPrograms] = useState(() => loadPrograms());
+
     const navigate = useNavigate();
+    const [activeFilters, setActiveFilters] = useState([]);
+
+    const allTagsInUse = [...new Set(programs.flatMap((p) => p.tags || []))];
+    const filterOptions = [...new Set([...PREDEFINED_TAGS, ...allTagsInUse])];
+
+    const filteredPrograms = activeFilters.length === 0
+        ? programs
+        : programs.filter((p) => (p.tags || []).some((t) => activeFilters.includes(t)));
+
+    function toggleFilter(tag) {
+        setActiveFilters((f) => (f.includes(tag) ? f.filter((t) => t !== tag) : [...f, tag]));
+    }
 
     function handleDelete(id) {
         if (confirm('Supprimer cette candidature ?')) {
@@ -32,14 +45,39 @@ function ProgramList() {
                 </button>
             </div>
 
-            {programs.length === 0 && (
+            {filterOptions.length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1.25rem' }}>
+                    {filterOptions.map((tag) => {
+                        const active = activeFilters.includes(tag);
+                        return (
+                            <button
+                                key={tag}
+                                onClick={() => toggleFilter(tag)}
+                                style={{
+                                    background: active ? 'var(--color-primary)' : 'var(--color-surface)',
+                                    color: active ? '#fff' : 'var(--color-text)',
+                                    border: '1px solid var(--color-border)',
+                                    borderRadius: 'var(--radius-pill)',
+                                    padding: '0.3rem 0.7rem',
+                                    fontSize: '0.8rem',
+                                }}
+                            >
+                                {tag}
+                            </button>
+                        );
+                    })}
+                </div>
+            )}
+
+            {filteredPrograms.length === 0 && (
                 <p style={{ color: 'var(--color-text-secondary)' }}>
                     Aucune candidature pour le moment. Ajoutez votre première candidature.
                 </p>
-            )}
+            )
+            }
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', cursor: 'pointer' }}>
-                {programs.map((p) => {
+                {filteredPrograms.map((p) => {
                     const color = STATUS_COLORS[p.status];
                     return (
                         <div
@@ -65,6 +103,13 @@ function ProgramList() {
                                         Échéance : {new Date(p.deadline).toLocaleDateString('fr-FR')}
                                     </div>
                                 )}
+                                {p.tags && p.tags.length > 0 && (
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.7rem', paddingRight: '3rem' }}>
+                                        {p.tags.map((tag) => (
+                                            <span key={tag} style={{ fontSize: '0.75rem', background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-pill)', padding: '0.1rem 0.75rem' }}>{tag}</span>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
 
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -76,6 +121,7 @@ function ProgramList() {
                                         padding: '0.3rem 0.75rem',
                                         fontSize: '0.8rem',
                                         fontWeight: 600,
+                                        whiteSpace: 'nowrap',
                                     }}
                                 >
                                     {STATUS_LABELS[p.status]}
@@ -87,7 +133,7 @@ function ProgramList() {
                     );
                 })}
             </div>
-        </div>
+        </div >
     );
 }
 
