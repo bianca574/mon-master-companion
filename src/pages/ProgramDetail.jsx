@@ -47,7 +47,7 @@ function ProgramDetail() {
 
     return (
         <div style={{ padding: '2rem', maxWidth: 600, margin: '0 auto' }}>
-            <Link to="/" style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>
+            <Link to="/programs" style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>
                 ← Retour
             </Link>
 
