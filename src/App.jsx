@@ -9,6 +9,7 @@ import RecommendationForm from './pages/RecommendationForm';
 import DecisionHelper from './pages/DecisionHelper';
 import LetterManager from './pages/LetterManager';
 import DataBackup from './pages/DataBackup';
+import LetterDiff from './pages/LetterDiff';
 
 function ProgramFormRoute() {
   const { id } = useParams();
@@ -47,6 +48,7 @@ function App() {
           <Link to="/decision" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Décision</Link>
           <Link to="/letters" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Lettres</Link>
           <Link to="/backup" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Sauvegarde</Link>
+          <Link to="/letters/compare" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Comparer</Link>
         </div>
         <button
           onClick={toggleTheme}
@@ -68,6 +70,7 @@ function App() {
         <Route path="/decision" element={<DecisionHelper />} />
         <Route path="/letters" element={<LetterManager />} />
         <Route path="/backup" element={<DataBackup />} />
+        <Route path="/letters/compare" element={<LetterDiff />} />
       </Routes>
     </BrowserRouter>
   );
