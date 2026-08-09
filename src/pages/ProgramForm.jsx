@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createProgram, addProgram, updateProgram, loadPrograms } from '../utils/storage';
-import { STATUS_LABELS } from '../utils/constants';
+import { STATUS_LABELS, PREDEFINED_TAGS } from '../utils/constants';
 
 const EMPTY_FORM = {
     university: '',
@@ -10,6 +10,7 @@ const EMPTY_FORM = {
     deadline: '',
     website: '',
     notes: '',
+    tags: [],
 };
 
 function ProgramForm() {
@@ -28,14 +29,34 @@ function ProgramForm() {
                     deadline: existing.deadline || '',
                     website: existing.website,
                     notes: existing.notes,
+                    tags: existing.tags || [],
                 };
             }
         }
         return EMPTY_FORM;
     });
 
+    const [customTagInput, setCustomTagInput] = useState('');
+
     function handleChange(field, value) {
         setForm((f) => ({ ...f, [field]: value }));
+    }
+
+    function togglePredefinedTag(tag) {
+        setForm((f) => ({
+            ...f,
+            tags: f.tags.includes(tag) ? f.tags.filter((t) => t !== tag) : [...f.tags, tag],
+        }));
+    }
+
+    function addCustomTag(tag) {
+        const trimmed = tag.trim();
+        if (!trimmed || form.tags.includes(trimmed)) return;
+        setForm((f) => ({ ...f, tags: [...f.tags, trimmed] }));
+    }
+
+    function removeTag(tag) {
+        setForm((f) => ({ ...f, tags: f.tags.filter((t) => t !== tag) }));
     }
 
     function handleSubmit(e) {
@@ -86,6 +107,59 @@ function ProgramForm() {
 
                 <label>Notes</label>
                 <textarea style={{ ...inputStyle, minHeight: 80 }} value={form.notes} onChange={(e) => handleChange('notes', e.target.value)} />
+
+                <label style={{ display: 'block', marginBottom: '0.3rem' }}>Tags</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.75rem' }}>
+                    {PREDEFINED_TAGS.map((tag) => {
+                        const active = form.tags.includes(tag);
+                        return (
+                            <button
+                                key={tag}
+                                type="button"
+                                onClick={() => togglePredefinedTag(tag)}
+                                style={{
+                                    background: active ? 'var(--color-primary)' : 'var(--color-surface)',
+                                    color: active ? '#fff' : 'var(--color-text)',
+                                    border: '1px solid var(--color-border)',
+                                    borderRadius: 'var(--radius-pill)',
+                                    padding: '0.3rem 0.7rem',
+                                    fontSize: '0.85rem',
+                                }}
+                            >
+                                {tag}
+                            </button>
+                        );
+                    })}
+                </div>
+
+                {form.tags.filter((t) => !PREDEFINED_TAGS.includes(t)).length > 0 && (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.5rem' }}>
+                        {form.tags.filter((t) => !PREDEFINED_TAGS.includes(t)).map((tag) => (
+                            <span
+                                key={tag}
+                                style={{ background: 'var(--color-secondary)', color: '#fff', borderRadius: 'var(--radius-pill)', padding: '0.3rem 0.7rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+                            >
+                                {tag}
+                                <span onClick={() => removeTag(tag)} style={{ cursor: 'pointer' }}>✕</span>
+                            </span>
+                        ))}
+                    </div>
+                )}
+
+                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+                    <input
+                        style={inputStyle}
+                        value={customTagInput}
+                        onChange={(e) => setCustomTagInput(e.target.value)}
+                        placeholder="Ajouter un tag personnalisé..."
+                    />
+                    <button
+                        type="button"
+                        onClick={() => { addCustomTag(customTagInput); setCustomTagInput(''); }}
+                    >
+                        + Ajouter
+                    </button>
+                </div>
 
                 <div style={{ display: 'flex', gap: '0.75rem' }}>
                     <button type="submit" style={{ background: 'var(--color-primary)', color: '#fff', border: 'none', borderRadius: 'var(--radius-pill)', padding: '0.6rem 1.2rem', fontWeight: 600 }}>

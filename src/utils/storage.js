@@ -53,6 +53,7 @@ function createProgram(fields) {
     website: '',
     documents: [],
     scores: {},
+    tags: [],
     notes: '',
     createdAt: now,
     updatedAt: now,
@@ -319,6 +320,7 @@ const ALL_KEYS = {
   recommendations: 'monmaster_recommendations',
   criteria: 'monmaster_criteria',
   letters: 'monmaster_letters',
+  journal: 'monmaster_journal',
 };
 
 function exportAllData() {
@@ -337,6 +339,42 @@ function importAllData(data) {
       localStorage.setItem(storageKey, JSON.stringify(data[key]));
     }
   }
+}
+
+const JOURNAL_KEY = 'monmaster_journal';
+
+// Journal entry shape: { id, date, text, programId (nullable), createdAt }
+
+function loadJournalEntries() {
+  try {
+    const raw = localStorage.getItem(JOURNAL_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (err) {
+    console.error('Failed to load journal entries', err);
+    return [];
+  }
+}
+
+function saveJournalEntries(list) {
+  try {
+    localStorage.setItem(JOURNAL_KEY, JSON.stringify(list));
+    return true;
+  } catch (err) {
+    console.error('Failed to save journal entries', err);
+    return false;
+  }
+}
+
+function addJournalEntry(entry) {
+  const updated = [...loadJournalEntries(), entry];
+  saveJournalEntries(updated);
+  return updated;
+}
+
+function deleteJournalEntry(id) {
+  const updated = loadJournalEntries().filter((e) => e.id !== id);
+  saveJournalEntries(updated);
+  return updated;
 }
 
 export {
@@ -369,5 +407,9 @@ export {
   deleteLetterVersion,
   getLettersForProgram,
   exportAllData,
-  importAllData
+  importAllData,
+  loadJournalEntries,
+  saveJournalEntries,
+  addJournalEntry,
+  deleteJournalEntry
 };

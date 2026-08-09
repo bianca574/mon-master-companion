@@ -9,6 +9,9 @@ import RecommendationForm from './pages/RecommendationForm';
 import DecisionHelper from './pages/DecisionHelper';
 import LetterManager from './pages/LetterManager';
 import DataBackup from './pages/DataBackup';
+import LetterDiff from './pages/LetterDiff';
+import Calendar from './pages/Calendar';
+import Journal from './pages/Journal';
 
 function ProgramFormRoute() {
   const { id } = useParams();
@@ -46,6 +49,9 @@ function App() {
           <Link to="/recommendations" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Recommandations</Link>
           <Link to="/decision" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Décision</Link>
           <Link to="/letters" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Lettres</Link>
+          <Link to="/letters/compare" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Comparer</Link>
+          <Link to="/calendar" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Calendrier</Link>
+          <Link to="/journal" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Journal</Link>
           <Link to="/backup" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Sauvegarde</Link>
         </div>
         <button
@@ -67,6 +73,9 @@ function App() {
         <Route path="/recommendations/:id/edit" element={<RecommendationFormRoute />} />
         <Route path="/decision" element={<DecisionHelper />} />
         <Route path="/letters" element={<LetterManager />} />
+        <Route path="/letters/compare" element={<LetterDiff />} />
+        <Route path="/calendar" element={<Calendar />} />
+        <Route path="/journal" element={<Journal />} />
         <Route path="/backup" element={<DataBackup />} />
       </Routes>
     </BrowserRouter>

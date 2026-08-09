@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { loadPrograms, addDocument, toggleDocument, removeDocument } from '../utils/storage';
+import { loadPrograms, addDocument, toggleDocument, removeDocument, loadLetters, loadRecommendations } from '../utils/storage';
 import { STATUS_LABELS, STATUS_COLORS } from '../utils/constants';
+import { getReadinessDetail } from '../utils/readiness';
 
 function ProgramDetail() {
     const { id } = useParams();
@@ -27,6 +28,8 @@ function ProgramDetail() {
     const total = program.documents.length;
     const doneCount = program.documents.filter((d) => d.done).length;
 
+    const readinessDetail = getReadinessDetail(program, loadLetters(), loadRecommendations());
+
     function handleAddDoc(e) {
         e.preventDefault();
         if (!newDoc.trim()) return;
@@ -47,7 +50,7 @@ function ProgramDetail() {
 
     return (
         <div style={{ padding: '2rem', maxWidth: 600, margin: '0 auto' }}>
-            <Link to="/" style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>
+            <Link to="/programs" style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>
                 ← Retour
             </Link>
 
@@ -84,7 +87,27 @@ function ProgramDetail() {
             </div>
 
             <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1.25rem', marginBottom: '1.5rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+
+                <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1.25rem', marginBottom: '1.5rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.7rem' }}>
+                        <span style={{ fontWeight: 600 }}>Préparation de la candidature</span>
+                        <span style={{ fontWeight: 700, color: 'var(--color-primary)' }}>{readinessDetail.score}%</span>
+                    </div>
+                    <div style={{ background: 'var(--color-border)', borderRadius: 'var(--radius-pill)', height: 10, overflow: 'hidden', marginBottom: '1.5rem' }}>
+                        <div style={{ width: `${readinessDetail.score}%`, height: '100%', background: 'var(--color-primary)' }} />
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                        {readinessDetail.parts.map((part) => (
+                            <div key={part.label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
+                                <span>{part.label}</span>
+                                <span>{Math.round(part.score * 100)}%</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                     <h3>Documents</h3>
                     <span style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
                         {doneCount} / {total}
@@ -92,7 +115,7 @@ function ProgramDetail() {
                 </div>
 
                 {program.documents.map((doc) => (
-                    <div key={doc.id} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.4rem 0' }}>
+                    <div key={doc.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.3rem 0' }}>
                         <input type="checkbox" checked={doc.done} onChange={() => handleToggle(doc.id)} />
                         <span style={{ flex: 1, textDecoration: doc.done ? 'line-through' : 'none', color: doc.done ? 'var(--color-text-secondary)' : 'var(--color-text)' }}>
                             {doc.label}
