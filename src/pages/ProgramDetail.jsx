@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { loadPrograms, addDocument, toggleDocument, removeDocument } from '../utils/storage';
+import { loadPrograms, addDocument, toggleDocument, removeDocument, loadLetters, loadRecommendations } from '../utils/storage';
 import { STATUS_LABELS, STATUS_COLORS } from '../utils/constants';
+import { calculateReadiness } from '../utils/readiness';
 
 function ProgramDetail() {
     const { id } = useParams();
@@ -26,6 +27,8 @@ function ProgramDetail() {
     const color = STATUS_COLORS[program.status];
     const total = program.documents.length;
     const doneCount = program.documents.filter((d) => d.done).length;
+
+    const readiness = calculateReadiness(program, loadLetters(), loadRecommendations());
 
     function handleAddDoc(e) {
         e.preventDefault();
@@ -89,6 +92,16 @@ function ProgramDetail() {
                     <span style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
                         {doneCount} / {total}
                     </span>
+                </div>
+
+                <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1.25rem', marginBottom: '1.5rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                        <span style={{ fontWeight: 600 }}>Préparation de la candidature</span>
+                        <span style={{ fontWeight: 700, color: 'var(--color-primary)' }}>{readiness}%</span>
+                    </div>
+                    <div style={{ background: 'var(--color-border)', borderRadius: 'var(--radius-pill)', height: 10, overflow: 'hidden' }}>
+                        <div style={{ width: `${readiness}%`, height: '100%', background: 'var(--color-primary)' }} />
+                    </div>
                 </div>
 
                 {program.documents.map((doc) => (
