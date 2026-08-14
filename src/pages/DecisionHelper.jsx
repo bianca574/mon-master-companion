@@ -1,37 +1,55 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
-    loadCriteria, addCriterion, updateCriterion, deleteCriterion, createCriterion,
+    loadCriteria, createCriterion, updateCriterion, deleteCriterion,
     loadPrograms, updateProgramScore,
 } from '../utils/storage';
 
 function DecisionHelper() {
-    const [criteria, setCriteria] = useState(() => loadCriteria());
-    const [programs, setPrograms] = useState(() => loadPrograms());
+    const [criteria, setCriteria] = useState([]);
+    const [programs, setPrograms] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [newCriterionName, setNewCriterionName] = useState('');
+
+    useEffect(() => {
+        Promise.all([loadCriteria(), loadPrograms()]).then(([criteriaData, programsData]) => {
+            setCriteria(criteriaData);
+            setPrograms(programsData);
+            setLoading(false);
+        });
+    }, []);
 
     const totalWeight = criteria.reduce((sum, c) => sum + Number(c.weight), 0);
 
-    function handleAddCriterion(e) {
+    async function handleAddCriterion(e) {
         e.preventDefault();
         if (!newCriterionName.trim()) return;
-        setCriteria(addCriterion(createCriterion({ name: newCriterionName.trim() })));
+        const created = await createCriterion({ name: newCriterionName.trim(), weight: 10 });
+        setCriteria((c) => [...c, created]);
         setNewCriterionName('');
     }
 
-    function handleWeightChange(id, weight) {
-        setCriteria(updateCriterion(id, { weight: Number(weight) }));
+    async function handleWeightChange(id, weight) {
+        const updated = await updateCriterion(id, { weight: Number(weight), name: criteria.find((c) => c.id === id).name });
+        setCriteria((c) => c.map((crit) => (crit.id === id ? updated : crit)));
     }
 
-    function handleNameChange(id, name) {
-        setCriteria(updateCriterion(id, { name }));
+    async function handleNameChange(id, name) {
+        const updated = await updateCriterion(id, { name, weight: criteria.find((c) => c.id === id).weight });
+        setCriteria((c) => c.map((crit) => (crit.id === id ? updated : crit)));
     }
 
-    function handleDeleteCriterion(id) {
-        setCriteria(deleteCriterion(id));
+    async function handleDeleteCriterion(id) {
+        await deleteCriterion(id);
+        setCriteria((c) => c.filter((crit) => crit.id !== id));
     }
 
-    function handleScoreChange(programId, criteriaId, value) {
-        setPrograms(updateProgramScore(programId, criteriaId, Number(value)));
+    async function handleScoreChange(programId, criteriaId, value) {
+        const updated = await updateProgramScore(programId, criteriaId, Number(value));
+        setPrograms((p) => p.map((prog) => (prog.id === programId ? updated : prog)));
+    }
+
+    if (loading) {
+        return <div style={{ padding: '2rem', color: 'var(--color-text-secondary)' }}>Chargement...</div>;
     }
 
     function weightedTotal(program) {

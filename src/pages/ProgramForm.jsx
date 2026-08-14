@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { createProgram, addProgram, updateProgram, loadPrograms } from '../utils/storage';
+import { createProgram, updateProgram, loadProgram } from '../utils/storage';
 import { STATUS_LABELS, PREDEFINED_TAGS } from '../utils/constants';
 
 const EMPTY_FORM = {
@@ -17,12 +17,14 @@ function ProgramForm() {
     const { id } = useParams();
     const isEditing = Boolean(id);
     const navigate = useNavigate();
+    const [form, setForm] = useState(EMPTY_FORM);
+    const [customTagInput, setCustomTagInput] = useState('');
+    const [loading, setLoading] = useState(isEditing);
 
-    const [form, setForm] = useState(() => {
+    useEffect(() => {
         if (isEditing) {
-            const existing = loadPrograms().find((p) => p.id === id);
-            if (existing) {
-                return {
+            loadProgram(id).then((existing) => {
+                setForm({
                     university: existing.university,
                     programName: existing.programName,
                     status: existing.status,
@@ -30,13 +32,11 @@ function ProgramForm() {
                     website: existing.website,
                     notes: existing.notes,
                     tags: existing.tags || [],
-                };
-            }
+                });
+                setLoading(false);
+            });
         }
-        return EMPTY_FORM;
-    });
-
-    const [customTagInput, setCustomTagInput] = useState('');
+    }, [id, isEditing]);
 
     function handleChange(field, value) {
         setForm((f) => ({ ...f, [field]: value }));
@@ -59,14 +59,18 @@ function ProgramForm() {
         setForm((f) => ({ ...f, tags: f.tags.filter((t) => t !== tag) }));
     }
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
         if (isEditing) {
-            updateProgram(id, form);
+            await updateProgram(id, form);
         } else {
-            addProgram(createProgram(form));
+            await createProgram(form);
         }
-        navigate('/');
+        navigate('/programs');
+    }
+
+    if (loading) {
+        return <div style={{ padding: '2rem', color: 'var(--color-text-secondary)' }}>Chargement...</div>;
     }
 
     const inputStyle = {
