@@ -1,13 +1,19 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadPrograms, deleteProgram } from '../utils/storage';
 import { STATUS_LABELS, STATUS_COLORS, PREDEFINED_TAGS } from '../utils/constants';
 
 function ProgramList() {
-    const [programs, setPrograms] = useState(() => loadPrograms());
-
+    const [programs, setPrograms] = useState([]);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const [activeFilters, setActiveFilters] = useState([]);
+
+    useEffect(() => {
+        loadPrograms()
+            .then(setPrograms)
+            .finally(() => setLoading(false));
+    }, []);
 
     const allTagsInUse = [...new Set(programs.flatMap((p) => p.tags || []))];
     const filterOptions = [...new Set([...PREDEFINED_TAGS, ...allTagsInUse])];
@@ -20,10 +26,15 @@ function ProgramList() {
         setActiveFilters((f) => (f.includes(tag) ? f.filter((t) => t !== tag) : [...f, tag]));
     }
 
-    function handleDelete(id) {
+    async function handleDelete(id) {
         if (confirm('Supprimer cette candidature ?')) {
-            setPrograms(deleteProgram(id));
+            await deleteProgram(id);
+            setPrograms((prev) => prev.filter((p) => p.id !== id));
         }
+    }
+
+    if (loading) {
+        return <div style={{ padding: '2rem', color: 'var(--color-text-secondary)' }}>Chargement...</div>;
     }
 
     return (
