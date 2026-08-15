@@ -18,11 +18,8 @@ function LetterManager() {
     }, []);
 
     useEffect(() => {
-        if (!selectedProgramId) {
-            setVersions([]);
-            return;
-        }
-        getLettersForProgram(selectedProgramId).then(setVersions);
+        Promise.resolve(selectedProgramId ? getLettersForProgram(selectedProgramId) : [])
+            .then(setVersions);
     }, [selectedProgramId, refreshTick]);
 
     function refresh() {

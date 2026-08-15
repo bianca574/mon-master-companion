@@ -12,6 +12,16 @@ function ProgramDetail() {
     const [loading, setLoading] = useState(true);
     const [newDoc, setNewDoc] = useState('');
 
+    useEffect(() => {
+        Promise.all([loadProgram(id), loadLetters(), loadRecommendations()]).then(
+            ([prog, letters, recommendations]) => {
+                setProgram(prog);
+                setReadinessDetail(getReadinessDetail(prog, letters, recommendations));
+                setLoading(false);
+            }
+        );
+    }, [id]);
+
     async function refresh() {
         const [prog, letters, recommendations] = await Promise.all([
             loadProgram(id),
@@ -22,10 +32,6 @@ function ProgramDetail() {
         setReadinessDetail(getReadinessDetail(prog, letters, recommendations));
         setLoading(false);
     }
-
-    useEffect(() => {
-        refresh();
-    }, [id]);
 
     if (loading) {
         return <div style={{ padding: '2rem', color: 'var(--color-text-secondary)' }}>Chargement...</div>;
