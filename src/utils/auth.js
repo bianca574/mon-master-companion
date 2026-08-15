@@ -43,4 +43,16 @@ function getCurrentUser() {
     return raw ? JSON.parse(raw) : null;
 }
 
-export { signup, login, logout, getToken, getCurrentUser };
+async function updateProfile(name) {
+    const res = await fetch(`${API_BASE}/auth/me`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+        body: JSON.stringify({ name }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Échec de la mise à jour');
+    localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+    return data.user;
+}
+
+export { signup, login, logout, getToken, getCurrentUser, updateProfile };

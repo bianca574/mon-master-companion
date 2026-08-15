@@ -14,6 +14,7 @@ import Calendar from './pages/Calendar';
 import Journal from './pages/Journal';
 import Auth from './pages/Auth';
 import { getCurrentUser, logout } from './utils/auth';
+import Profile from './pages/Profile';
 
 function ProgramFormRoute() {
   const { id } = useParams();
@@ -67,7 +68,7 @@ function App() {
         <div style={{ display: 'flex', flexDirection: 'row-reverse', alignItems: 'center', gap: '0.75rem' }}>
           {currentUser ? (
             <>
-              <span style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>{currentUser.name}</span>
+              <Link to="/profile" style={{ color: 'var(--color-text-secondary)', fontSize: '0.85rem', textDecoration: 'none' }}>{currentUser.name}</Link>
               <button
                 onClick={handleLogout}
                 style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-pill)', padding: '0.4rem 0.9rem', color: 'var(--color-text)' }}
@@ -103,6 +104,7 @@ function App() {
         <Route path="/journal" element={<Journal />} />
         <Route path="/backup" element={<DataBackup />} />
         <Route path="/login" element={<Auth onSuccess={() => setCurrentUser(getCurrentUser())} />} />
+        <Route path="/profile" element={<Profile onSuccess={() => setCurrentUser(getCurrentUser())} />} />
       </Routes>
     </BrowserRouter>
   );
