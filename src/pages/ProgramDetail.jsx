@@ -150,7 +150,7 @@ function ProgramDetail() {
                     <input
                         value={newDoc}
                         onChange={(e) => setNewDoc(e.target.value)}
-                        placeholder="Ex : portfolio, lettre de recommandation..."
+                        placeholder="Ex : Relevé de notes, Portfolio, CV,..."
                         style={{ flex: 1, padding: '0.5rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border)', background: 'var(--color-bg)', color: 'var(--color-text)' }}
                     />
                     <button type="submit">+ Ajouter</button>
