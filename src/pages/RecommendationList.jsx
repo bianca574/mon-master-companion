@@ -1,12 +1,21 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadRecommendations, deleteRecommendation, loadPrograms } from '../utils/storage';
 import { REC_STATUS_LABELS, REC_STATUS_COLORS } from '../utils/constants';
 
 function RecommendationList() {
-    const [recommendations, setRecommendations] = useState(() => loadRecommendations());
-    const programs = loadPrograms();
+    const [recommendations, setRecommendations] = useState([]);
+    const [programs, setPrograms] = useState([]);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        Promise.all([loadRecommendations(), loadPrograms()]).then(([recs, progs]) => {
+            setRecommendations(recs);
+            setPrograms(progs);
+            setLoading(false);
+        });
+    }, []);
 
     function programNames(ids) {
         return ids
@@ -15,13 +24,18 @@ function RecommendationList() {
                 return p ? `${p.programName}, ${p.university}` : null;
             })
             .filter(Boolean)
-            .join(' & ');
+            .join(' · ');
     }
 
-    function handleDelete(id) {
+    async function handleDelete(id) {
         if (confirm('Supprimer cette recommandation ?')) {
-            setRecommendations(deleteRecommendation(id));
+            await deleteRecommendation(id);
+            setRecommendations((prev) => prev.filter((r) => r.id !== id));
         }
+    }
+
+    if (loading) {
+        return <div style={{ padding: '2rem', color: 'var(--color-text-secondary)' }}>Chargement...</div>;
     }
 
     return (

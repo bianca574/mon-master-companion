@@ -1,10 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { diffWords } from 'diff';
 import { loadPrograms, loadLetters } from '../utils/storage';
 
 function LetterDiff() {
-    const [programs] = useState(() => loadPrograms());
-    const [letters] = useState(() => loadLetters());
+    const [programs, setPrograms] = useState([]);
+    const [letters, setLetters] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [leftId, setLeftId] = useState('');
+    const [rightId, setRightId] = useState('');
+
+    useEffect(() => {
+        Promise.all([loadPrograms(), loadLetters()]).then(([programsData, lettersData]) => {
+            setPrograms(programsData);
+            setLetters(lettersData);
+            setLoading(false);
+        });
+    }, []);
+
+    if (loading) {
+        return <div style={{ padding: '2rem', color: 'var(--color-text-secondary)' }}>Chargement...</div>;
+    }
 
     const options = letters
         .map((l) => {
@@ -17,11 +32,11 @@ function LetterDiff() {
         })
         .sort((a, b) => a.label.localeCompare(b.label));
 
-    const [leftId, setLeftId] = useState(options[0]?.id || '');
-    const [rightId, setRightId] = useState(options[1]?.id || '');
+    const effectiveLeftId = leftId || options[0]?.id || '';
+    const effectiveRightId = rightId || options[1]?.id || '';
 
-    const left = options.find((o) => o.id === leftId);
-    const right = options.find((o) => o.id === rightId);
+    const left = options.find((o) => o.id === effectiveLeftId);
+    const right = options.find((o) => o.id === effectiveRightId);
 
     const diff = left && right ? diffWords(left.content, right.content) : [];
 
@@ -53,13 +68,13 @@ function LetterDiff() {
                     <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
                         <div style={{ flex: 1 }}>
                             <label style={{ display: 'block', marginBottom: '0.5rem' }}>Version A</label>
-                            <select style={selectStyle} value={leftId} onChange={(e) => setLeftId(e.target.value)}>
+                            <select style={selectStyle} value={effectiveLeftId} onChange={(e) => setLeftId(e.target.value)}>
                                 {options.map((o) => <option key={o.id} value={o.id}>{o.label}</option>)}
                             </select>
                         </div>
                         <div style={{ flex: 1 }}>
                             <label style={{ display: 'block', marginBottom: '0.5rem' }}>Version B</label>
-                            <select style={selectStyle} value={rightId} onChange={(e) => setRightId(e.target.value)}>
+                            <select style={selectStyle} value={effectiveRightId} onChange={(e) => setRightId(e.target.value)}>
                                 {options.map((o) => <option key={o.id} value={o.id}>{o.label}</option>)}
                             </select>
                         </div>

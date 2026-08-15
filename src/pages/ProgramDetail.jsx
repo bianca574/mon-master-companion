@@ -1,25 +1,41 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { loadPrograms, addDocument, toggleDocument, removeDocument, loadLetters, loadRecommendations } from '../utils/storage';
+import { loadProgram, addDocument, toggleDocument, removeDocument, loadLetters, loadRecommendations } from '../utils/storage';
 import { STATUS_LABELS, STATUS_COLORS } from '../utils/constants';
 import { getReadinessDetail } from '../utils/readiness';
 
 function ProgramDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [program, setProgram] = useState(() => loadPrograms().find((p) => p.id === id) || null);
+    const [program, setProgram] = useState(null);
+    const [readinessDetail, setReadinessDetail] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [newDoc, setNewDoc] = useState('');
 
-    function refresh() {
-        const found = loadPrograms().find((p) => p.id === id);
-        setProgram(found || null);
+    async function refresh() {
+        const [prog, letters, recommendations] = await Promise.all([
+            loadProgram(id),
+            loadLetters(),
+            loadRecommendations(),
+        ]);
+        setProgram(prog);
+        setReadinessDetail(getReadinessDetail(prog, letters, recommendations));
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        refresh();
+    }, [id]);
+
+    if (loading) {
+        return <div style={{ padding: '2rem', color: 'var(--color-text-secondary)' }}>Chargement...</div>;
     }
 
     if (!program) {
         return (
             <div style={{ padding: '2rem' }}>
                 <p>Candidature introuvable.</p>
-                <Link to="/">Retour à la liste</Link>
+                <Link to="/programs">Retour à la liste</Link>
             </div>
         );
     }
@@ -28,23 +44,21 @@ function ProgramDetail() {
     const total = program.documents.length;
     const doneCount = program.documents.filter((d) => d.done).length;
 
-    const readinessDetail = getReadinessDetail(program, loadLetters(), loadRecommendations());
-
-    function handleAddDoc(e) {
+    async function handleAddDoc(e) {
         e.preventDefault();
         if (!newDoc.trim()) return;
-        addDocument(program.id, newDoc.trim());
+        await addDocument(program.id, newDoc.trim());
         setNewDoc('');
         refresh();
     }
 
-    function handleToggle(docId) {
-        toggleDocument(program.id, docId);
+    async function handleToggle(docId) {
+        await toggleDocument(program.id, docId);
         refresh();
     }
 
-    function handleRemove(docId) {
-        removeDocument(program.id, docId);
+    async function handleRemove(docId) {
+        await removeDocument(program.id, docId);
         refresh();
     }
 
