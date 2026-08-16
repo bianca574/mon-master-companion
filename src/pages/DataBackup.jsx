@@ -5,15 +5,19 @@ function DataBackup() {
     const fileInputRef = useRef(null);
     const [message, setMessage] = useState('');
 
-    function handleExport() {
-        const data = exportAllData();
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `monmaster-backup-${new Date().toISOString().slice(0, 10)}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
+    async function handleExport() {
+        try {
+            const data = await exportAllData();
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `monmaster-backup-${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            setMessage("Échec de l'export : " + err.message);
+        }
     }
 
     function handleImportClick() {
@@ -25,15 +29,17 @@ function DataBackup() {
         if (!file) return;
 
         const reader = new FileReader();
-        reader.onload = () => {
+        reader.onload = async () => {
             try {
                 const data = JSON.parse(reader.result);
-                if (!confirm('Cela va remplacer toutes vos données actuelles par celles du fichier. Continuer ?')) return;
-                importAllData(data);
+                const confirmed = confirm('Ceci va remplacer toutes vos données actuelles par celles du fichier. Cette action est irréversible. Continuer ?');
+                if (!confirmed) return;
+
+                await importAllData(data);
                 setMessage('Import réussi. Rechargez la page pour voir vos données.');
             } catch (err) {
                 console.error('Import failed', err);
-                setMessage("Échec de l'import : fichier invalide.");
+                setMessage("Échec de l'import : " + err.message);
             }
         };
         reader.readAsText(file);
@@ -42,12 +48,12 @@ function DataBackup() {
 
     return (
         <div style={{ padding: '2rem', maxWidth: 500, margin: '0 auto' }}>
-            <h1 style={{ color: 'var(--color-primary)', marginBottom: '0.5rem' }}>Sauvegarde des données</h1>
-            <p style={{ color: 'var(--color-text-secondary)', marginBottom: '1.5rem' }}>
-                Toutes vos données sont stockées localement dans votre navigateur. Exportez régulièrement pour éviter de les perdre.
+            <h1 style={{ color: 'var(--color-primary)', marginBottom: '2rem' }}>Sauvegarde des données</h1>
+            <p style={{ color: 'var(--color-text-secondary)', marginBottom: '2.5rem' }}>
+                Exportez régulièrement vos données en JSON. L'import remplace intégralement vos données actuelles.
             </p>
 
-            <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '3rem', marginRight: '3rem', marginBottom: '1rem' }}>
                 <button
                     onClick={handleExport}
                     style={{ background: 'var(--color-primary)', color: '#fff', border: 'none', borderRadius: 'var(--radius-pill)', padding: '0.6rem 1.2rem', fontWeight: 600 }}

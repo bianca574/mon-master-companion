@@ -1,41 +1,44 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { loadPrograms, loadJournalEntries, addJournalEntry, deleteJournalEntry, generateId } from '../utils/storage';
+import { loadPrograms, loadJournalEntries, addJournalEntry, deleteJournalEntry } from '../utils/storage';
 
 function todayStr() {
     return new Date().toISOString().slice(0, 10);
 }
 
 function Journal() {
-    const [programs] = useState(() => loadPrograms());
-    const [entries, setEntries] = useState(() => loadJournalEntries());
+    const [programs, setPrograms] = useState([]);
+    const [entries, setEntries] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [date, setDate] = useState(todayStr());
     const [text, setText] = useState('');
     const [programId, setProgramId] = useState('');
 
+    useEffect(() => {
+        Promise.all([loadPrograms(), loadJournalEntries()]).then(([programsData, entriesData]) => {
+            setPrograms(programsData);
+            setEntries(entriesData);
+            setLoading(false);
+        });
+    }, []);
+
     const sorted = [...entries].sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    function refresh() {
-        setEntries(loadJournalEntries());
-    }
-
-    function handleAdd(e) {
+    async function handleAdd(e) {
         e.preventDefault();
         if (!text.trim()) return;
-        addJournalEntry({
-            id: generateId(),
-            date,
-            text: text.trim(),
-            programId: programId || null,
-            createdAt: new Date().toISOString(),
-        });
+        const created = await addJournalEntry({ date, text: text.trim(), programId: programId || null });
+        setEntries((prev) => [...prev, created]);
         setText('');
-        refresh();
     }
 
-    function handleDelete(id) {
-        deleteJournalEntry(id);
-        refresh();
+    async function handleDelete(id) {
+        await deleteJournalEntry(id);
+        setEntries((prev) => prev.filter((e) => e.id !== id));
+    }
+
+    if (loading) {
+        return <div style={{ padding: '2rem', color: 'var(--color-text-secondary)' }}>Chargement...</div>;
     }
 
     const inputStyle = {

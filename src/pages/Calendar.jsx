@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadPrograms } from '../utils/storage';
 
@@ -10,7 +10,7 @@ function toDateKey(date) {
 
 function buildMonthGrid(year, month) {
     const firstOfMonth = new Date(year, month, 1);
-    const startOffset = (firstOfMonth.getDay() + 6) % 7; // Monday = 0
+    const startOffset = (firstOfMonth.getDay() + 6) % 7;
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
     const cells = [];
@@ -25,10 +25,22 @@ function buildMonthGrid(year, month) {
 
 function Calendar() {
     const navigate = useNavigate();
-    const [programs] = useState(() => loadPrograms());
+    const [programs, setPrograms] = useState([]);
+    const [loading, setLoading] = useState(true);
     const today = new Date();
     const [year, setYear] = useState(today.getFullYear());
     const [month, setMonth] = useState(today.getMonth());
+
+    useEffect(() => {
+        loadPrograms().then((data) => {
+            setPrograms(data);
+            setLoading(false);
+        });
+    }, []);
+
+    if (loading) {
+        return <div style={{ padding: '2rem', color: 'var(--color-text-secondary)' }}>Chargement...</div>;
+    }
 
     const deadlinesByDate = {};
     programs.forEach((p) => {

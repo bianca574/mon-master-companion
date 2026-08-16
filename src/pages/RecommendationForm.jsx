@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { createRecommendation, addRecommendation, updateRecommendation, loadRecommendations, loadPrograms } from '../utils/storage';
+import { createRecommendation, updateRecommendation, loadRecommendations, loadPrograms } from '../utils/storage';
 import { REC_STATUS_LABELS } from '../utils/constants';
 
 const EMPTY_FORM = {
@@ -16,24 +16,32 @@ function RecommendationForm() {
     const { id } = useParams();
     const isEditing = Boolean(id);
     const navigate = useNavigate();
-    const programs = loadPrograms();
+    const [programs, setPrograms] = useState([]);
+    const [form, setForm] = useState(EMPTY_FORM);
+    const [loading, setLoading] = useState(true);
 
-    const [form, setForm] = useState(() => {
-        if (isEditing) {
-            const existing = loadRecommendations().find((r) => r.id === id);
-            if (existing) {
-                return {
-                    name: existing.name,
-                    institution: existing.institution,
-                    status: existing.status,
-                    programIds: existing.programIds,
-                    askedDate: existing.askedDate || '',
-                    notes: existing.notes,
-                };
+    useEffect(() => {
+        Promise.all([
+            loadPrograms(),
+            isEditing ? loadRecommendations() : Promise.resolve(null),
+        ]).then(([programsData, recs]) => {
+            setPrograms(programsData);
+            if (isEditing && recs) {
+                const existing = recs.find((r) => r.id === id);
+                if (existing) {
+                    setForm({
+                        name: existing.name,
+                        institution: existing.institution,
+                        status: existing.status,
+                        programIds: existing.programIds,
+                        askedDate: existing.askedDate || '',
+                        notes: existing.notes,
+                    });
+                }
             }
-        }
-        return EMPTY_FORM;
-    });
+            setLoading(false);
+        });
+    }, [id, isEditing]);
 
     function handleChange(field, value) {
         setForm((f) => ({ ...f, [field]: value }));
@@ -48,14 +56,18 @@ function RecommendationForm() {
         }));
     }
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
         if (isEditing) {
-            updateRecommendation(id, form);
+            await updateRecommendation(id, form);
         } else {
-            addRecommendation(createRecommendation(form));
+            await createRecommendation(form);
         }
         navigate('/recommendations');
+    }
+
+    if (loading) {
+        return <div style={{ padding: '2rem', color: 'var(--color-text-secondary)' }}>Chargement...</div>;
     }
 
     const inputStyle = {

@@ -12,6 +12,9 @@ import DataBackup from './pages/DataBackup';
 import LetterDiff from './pages/LetterDiff';
 import Calendar from './pages/Calendar';
 import Journal from './pages/Journal';
+import Auth from './pages/Auth';
+import { getCurrentUser, logout } from './utils/auth';
+import Profile from './pages/Profile';
 
 function ProgramFormRoute() {
   const { id } = useParams();
@@ -40,10 +43,17 @@ function App() {
     setTheme((t) => (t === 'light' ? 'dark' : 'light'));
   }
 
+  const [currentUser, setCurrentUser] = useState(() => getCurrentUser());
+
+  function handleLogout() {
+    logout();
+    setCurrentUser(null);
+  }
+
   return (
     <BrowserRouter>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 2rem 0' }}>
-        <div style={{ display: 'flex', gap: '1rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 2rem 0', flexWrap: 'wrap', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
           <Link to="/" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Tableau de bord</Link>
           <Link to="/programs" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Candidatures</Link>
           <Link to="/recommendations" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Recommandations</Link>
@@ -54,12 +64,28 @@ function App() {
           <Link to="/journal" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Journal</Link>
           <Link to="/backup" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Sauvegarde</Link>
         </div>
-        <button
-          onClick={toggleTheme}
-          style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-pill)', padding: '0.4rem 0.9rem', color: 'var(--color-text)' }}
-        >
-          {theme === 'light' ? '🌙' : '☀️'}
-        </button>
+
+        <div style={{ display: 'flex', flexDirection: 'row-reverse', alignItems: 'center', gap: '0.75rem' }}>
+          {currentUser ? (
+            <>
+              <Link to="/profile" style={{ color: 'var(--color-text-secondary)', fontSize: '0.85rem', textDecoration: 'none' }}>{currentUser.name}</Link>
+              <button
+                onClick={handleLogout}
+                style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-pill)', padding: '0.4rem 0.9rem', color: 'var(--color-text)' }}
+              >
+                Se déconnecter
+              </button>
+            </>
+          ) : (
+            <Link to="/login" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Se connecter</Link>
+          )}
+          <button
+            onClick={toggleTheme}
+            style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-pill)', padding: '0.4rem 0.9rem', color: 'var(--color-text)' }}
+          >
+            {theme === 'light' ? '🌙' : '☀️'}
+          </button>
+        </div>
       </div>
 
       <Routes>
@@ -77,6 +103,8 @@ function App() {
         <Route path="/calendar" element={<Calendar />} />
         <Route path="/journal" element={<Journal />} />
         <Route path="/backup" element={<DataBackup />} />
+        <Route path="/login" element={<Auth onSuccess={() => setCurrentUser(getCurrentUser())} />} />
+        <Route path="/profile" element={<Profile onSuccess={() => setCurrentUser(getCurrentUser())} />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { loadPrograms, loadLetters, loadRecommendations } from '../utils/storage';
 import { STATUS_LABELS } from '../utils/constants';
@@ -16,11 +17,27 @@ function urgencyColor(days) {
 }
 
 function Dashboard() {
-    const programs = loadPrograms();
-    const letters = loadLetters();
-    const recommendations = loadRecommendations();
-    const now = new Date();
+    const [programs, setPrograms] = useState([]);
+    const [letters, setLetters] = useState([]);
+    const [recommendations, setRecommendations] = useState([]);
+    const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+        Promise.all([loadPrograms(), loadLetters(), loadRecommendations()]).then(
+            ([programsData, lettersData, recsData]) => {
+                setPrograms(programsData);
+                setLetters(lettersData);
+                setRecommendations(recsData);
+                setLoading(false);
+            }
+        );
+    }, []);
+
+    if (loading) {
+        return <div style={{ padding: '2rem', color: 'var(--color-text-secondary)' }}>Chargement...</div>;
+    }
+
+    const now = new Date();
     const activePrograms = programs.filter((p) => p.status !== 'accepted' && p.status !== 'rejected');
 
     const total = programs.length;

@@ -1,25 +1,47 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { loadPrograms, addDocument, toggleDocument, removeDocument, loadLetters, loadRecommendations } from '../utils/storage';
+import { loadProgram, addDocument, toggleDocument, removeDocument, loadLetters, loadRecommendations } from '../utils/storage';
 import { STATUS_LABELS, STATUS_COLORS } from '../utils/constants';
 import { getReadinessDetail } from '../utils/readiness';
 
 function ProgramDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [program, setProgram] = useState(() => loadPrograms().find((p) => p.id === id) || null);
+    const [program, setProgram] = useState(null);
+    const [readinessDetail, setReadinessDetail] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [newDoc, setNewDoc] = useState('');
 
-    function refresh() {
-        const found = loadPrograms().find((p) => p.id === id);
-        setProgram(found || null);
+    useEffect(() => {
+        Promise.all([loadProgram(id), loadLetters(), loadRecommendations()]).then(
+            ([prog, letters, recommendations]) => {
+                setProgram(prog);
+                setReadinessDetail(getReadinessDetail(prog, letters, recommendations));
+                setLoading(false);
+            }
+        );
+    }, [id]);
+
+    async function refresh() {
+        const [prog, letters, recommendations] = await Promise.all([
+            loadProgram(id),
+            loadLetters(),
+            loadRecommendations(),
+        ]);
+        setProgram(prog);
+        setReadinessDetail(getReadinessDetail(prog, letters, recommendations));
+        setLoading(false);
+    }
+
+    if (loading) {
+        return <div style={{ padding: '2rem', color: 'var(--color-text-secondary)' }}>Chargement...</div>;
     }
 
     if (!program) {
         return (
             <div style={{ padding: '2rem' }}>
                 <p>Candidature introuvable.</p>
-                <Link to="/">Retour à la liste</Link>
+                <Link to="/programs">Retour à la liste</Link>
             </div>
         );
     }
@@ -28,23 +50,21 @@ function ProgramDetail() {
     const total = program.documents.length;
     const doneCount = program.documents.filter((d) => d.done).length;
 
-    const readinessDetail = getReadinessDetail(program, loadLetters(), loadRecommendations());
-
-    function handleAddDoc(e) {
+    async function handleAddDoc(e) {
         e.preventDefault();
         if (!newDoc.trim()) return;
-        addDocument(program.id, newDoc.trim());
+        await addDocument(program.id, newDoc.trim());
         setNewDoc('');
         refresh();
     }
 
-    function handleToggle(docId) {
-        toggleDocument(program.id, docId);
+    async function handleToggle(docId) {
+        await toggleDocument(program.id, docId);
         refresh();
     }
 
-    function handleRemove(docId) {
-        removeDocument(program.id, docId);
+    async function handleRemove(docId) {
+        await removeDocument(program.id, docId);
         refresh();
     }
 
@@ -130,7 +150,7 @@ function ProgramDetail() {
                     <input
                         value={newDoc}
                         onChange={(e) => setNewDoc(e.target.value)}
-                        placeholder="Ex : portfolio, lettre de recommandation..."
+                        placeholder="Ex : Relevé de notes, Portfolio, CV,..."
                         style={{ flex: 1, padding: '0.5rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border)', background: 'var(--color-bg)', color: 'var(--color-text)' }}
                     />
                     <button type="submit">+ Ajouter</button>

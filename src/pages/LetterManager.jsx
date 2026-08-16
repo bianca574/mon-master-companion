@@ -1,30 +1,47 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { loadPrograms, addLetterVersion, deleteLetterVersion, getLettersForProgram } from '../utils/storage';
 
 function LetterManager() {
-    const [programs] = useState(() => loadPrograms());
-    const [selectedProgramId, setSelectedProgramId] = useState(programs[0]?.id || '');
-    const [, setRefreshTick] = useState(0);
+    const [programs, setPrograms] = useState([]);
+    const [selectedProgramId, setSelectedProgramId] = useState('');
+    const [versions, setVersions] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [draft, setDraft] = useState('');
+    const [refreshTick, setRefreshTick] = useState(0);
 
-    const versions = getLettersForProgram(selectedProgramId);
+    useEffect(() => {
+        loadPrograms().then((data) => {
+            setPrograms(data);
+            if (data.length > 0) setSelectedProgramId(data[0].id);
+            setLoading(false);
+        });
+    }, []);
+
+    useEffect(() => {
+        Promise.resolve(selectedProgramId ? getLettersForProgram(selectedProgramId) : [])
+            .then(setVersions);
+    }, [selectedProgramId, refreshTick]);
 
     function refresh() {
         setRefreshTick((t) => t + 1);
     }
 
-    function handleSave() {
+    async function handleSave() {
         if (!draft.trim() || !selectedProgramId) return;
-        addLetterVersion(selectedProgramId, draft.trim());
+        await addLetterVersion(selectedProgramId, draft.trim());
         setDraft('');
         refresh();
     }
 
-    function handleDelete(id) {
+    async function handleDelete(id) {
         if (confirm('Supprimer cette version ?')) {
-            deleteLetterVersion(id);
+            await deleteLetterVersion(id);
             refresh();
         }
+    }
+
+    if (loading) {
+        return <div style={{ padding: '2rem', color: 'var(--color-text-secondary)' }}>Chargement...</div>;
     }
 
     const inputStyle = {
