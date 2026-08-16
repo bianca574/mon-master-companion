@@ -103,7 +103,7 @@ function deleteJournalEntry(id) {
   return apiFetch(`/journal/${id}`, { method: 'DELETE' });
 }
 
-// Export/import — now export reads live from the API; import is dropped 
+// Export/import — now export reads live from the API
 async function exportAllData() {
   const [programs, recommendations, criteria, letters, journal] = await Promise.all([
     loadPrograms(),
@@ -115,6 +115,10 @@ async function exportAllData() {
   return { programs, recommendations, criteria, letters, journal, exportedAt: new Date().toISOString() };
 }
 
+function importAllData(data) {
+  return apiFetch('/backup/import', { method: 'POST', body: JSON.stringify(data) });
+}
+
 export {
   loadPrograms, loadProgram, createProgram, updateProgram, deleteProgram,
   addDocument, toggleDocument, removeDocument, updateProgramScore,
@@ -122,5 +126,5 @@ export {
   loadCriteria, createCriterion, updateCriterion, deleteCriterion,
   loadLetters, getLettersForProgram, addLetterVersion, deleteLetterVersion,
   loadJournalEntries, addJournalEntry, deleteJournalEntry,
-  exportAllData,
+  exportAllData, importAllData,
 };
