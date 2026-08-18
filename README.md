@@ -1,16 +1,61 @@
-# React + Vite
+# MonMaster Companion
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Application de suivi de candidatures aux masters en France : tableau de bord,
+checklist de documents par candidature, calendrier des échéances, gestionnaire
+de versions de lettres de motivation avec comparaison, aide à la décision par
+pondération transparente (pas d'IA), journal de candidature, et sauvegarde de données.
 
-Currently, two official plugins are available:
+Démo en ligne : https://mon-master-companion.vercel.app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Documentation
 
-## React Compiler
+- DESIGN : choix d'architecture du projet
+- LICENSE : licence du projet
+- [monmaster-api](https://github.com/bianca574/mon-master-api) : dépôt de l'API backend
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Compte de démonstration
 
-## Expanding the ESLint configuration
+Pour explorer l'application sans créer de compte :
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Email : `demo@monmaster.app`
+- Mot de passe : `DemoMonMaster2026`
+
+## Stack technique
+
+- React 18 + Vite
+- React Router
+- Vitest (tests)
+- GitHub Actions (lint, build, test)
+- Déployé sur Vercel
+
+## Lancer le projet en local
+
+Prérequis : Node 20+, et l'API backend accessible (voir le dépôt
+[monmaster-api](https://github.com/bianca574/mon-master-api)).
+
+```bash
+npm install
+cp .env.example .env.local
+npm run dev
+```
+
+Par défaut, `VITE_API_BASE` pointe vers `http://localhost:3001`. Modifier
+`.env.local` si l'API tourne ailleurs.
+
+## Tests
+
+```bash
+npm run test
+```
+
+## Build
+
+```bash
+npm run build
+```
+
+## Lint
+
+```bash
+npm run lint
+```
