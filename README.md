@@ -13,6 +13,13 @@ Démo en ligne : https://mon-master-companion.vercel.app
 - LICENSE : licence du projet
 - [monmaster-api](https://github.com/bianca574/mon-master-api) : dépôt de l'API backend
 
+## Aperçu
+
+![Tableau de bord](screenshots/dashboard.png)
+![Candidatures](screenshots/programs.png)
+![Détail d'une candidature](screenshots/program-detail.png)
+![Calendrier](screenshots/calendar.png)
+
 ## Compte de démonstration
 
 Pour explorer l'application sans créer de compte :
