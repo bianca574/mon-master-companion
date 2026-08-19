@@ -48,6 +48,7 @@ function App() {
   function handleLogout() {
     logout();
     setCurrentUser(null);
+    window.location.href = '/login';
   }
 
   return (
