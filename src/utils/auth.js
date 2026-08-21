@@ -77,4 +77,4 @@ async function resetPassword(token, newPassword) {
     return data.message;
 }
 
-export { signup, login, logout, getToken, getCurrentUser, updateProfile };
+export { signup, login, logout, getToken, getCurrentUser, updateProfile, requestPasswordReset, resetPassword };
