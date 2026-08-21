@@ -55,4 +55,26 @@ async function updateProfile(name) {
     return data.user;
 }
 
-export { signup, login, logout, getToken, getCurrentUser, updateProfile };
+async function requestPasswordReset(email) {
+    const res = await fetch(`${API_BASE}/auth/request-reset`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Une erreur est survenue');
+    return data.message;
+}
+
+async function resetPassword(token, newPassword) {
+    const res = await fetch(`${API_BASE}/auth/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, newPassword }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Une erreur est survenue');
+    return data.message;
+}
+
+export { signup, login, logout, getToken, getCurrentUser, updateProfile, requestPasswordReset, resetPassword };

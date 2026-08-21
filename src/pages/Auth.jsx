@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { signup, login } from '../utils/auth';
 
 function Auth({ onSuccess }) {
@@ -45,27 +45,27 @@ function Auth({ onSuccess }) {
             <form onSubmit={handleSubmit}>
                 {mode === 'signup' && (
                     <>
-                        <label style={{ display: 'block', marginBottom: '0.3rem' }}>Nom</label>
+                        <label style={{ display: 'block', marginBottom: '0.5rem' }}>Nom</label>
                         <input style={inputStyle} value={name} onChange={(e) => setName(e.target.value)} required />
                     </>
                 )}
-                <label style={{ display: 'block', marginBottom: '0.3rem' }}>Email</label>
+                <label style={{ display: 'block', marginBottom: '0.5rem', marginTop: '0.5rem' }}>Email</label>
                 <input type="email" style={inputStyle} value={email} onChange={(e) => setEmail(e.target.value)} required />
 
-                <label style={{ display: 'block', marginBottom: '0.3rem' }}>Mot de passe</label>
+                <label style={{ display: 'block', marginBottom: '0.5rem', marginTop: '0.5rem' }}>Mot de passe</label>
                 <input type="password" style={inputStyle} value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
 
                 {error && <p style={{ color: 'var(--color-status-urgent)', fontSize: '0.85rem' }}>{error}</p>}
 
                 <button
                     type="submit"
-                    style={{ background: 'var(--color-primary)', color: '#fff', border: 'none', borderRadius: 'var(--radius-pill)', padding: '0.6rem 1.2rem', fontWeight: 600, width: '100%' }}
+                    style={{ background: 'var(--color-primary)', color: '#fff', border: 'none', borderRadius: 'var(--radius-pill)', padding: '0.6rem 1.2rem', fontWeight: 600, width: '100%', marginTop: '0.5rem' }}
                 >
                     {mode === 'login' ? 'Se connecter' : "S'inscrire"}
                 </button>
             </form>
 
-            <p style={{ marginTop: '1rem', fontSize: '0.9rem', color: 'var(--color-text-secondary)' }}>
+            <p style={{ marginTop: '1.5rem', fontSize: '0.9rem', color: 'var(--color-text-secondary)' }}>
                 {mode === 'login' ? 'Pas encore de compte ? ' : 'Déjà un compte ? '}
                 <span
                     onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
@@ -74,6 +74,11 @@ function Auth({ onSuccess }) {
                     {mode === 'login' ? "S'inscrire" : 'Se connecter'}
                 </span>
             </p>
+            {mode === 'login' && (
+                <p style={{ marginTop: '1.5rem', fontSize: '0.85rem' }}>
+                    <Link to="/forgot-password" style={{ color: 'var(--color-text-secondary)' }}>Mot de passe oublié ?</Link>
+                </p>
+            )}
         </div>
     );
 }
