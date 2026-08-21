@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { signup, login } from '../utils/auth';
 
 function Auth({ onSuccess }) {
@@ -74,6 +74,11 @@ function Auth({ onSuccess }) {
                     {mode === 'login' ? "S'inscrire" : 'Se connecter'}
                 </span>
             </p>
+            {mode === 'login' && (
+                <p style={{ marginTop: '0.5rem', fontSize: '0.85rem' }}>
+                    <Link to="/forgot-password" style={{ color: 'var(--color-text-secondary)' }}>Mot de passe oublié ?</Link>
+                </p>
+            )}
         </div>
     );
 }

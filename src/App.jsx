@@ -15,6 +15,8 @@ import Journal from './pages/Journal';
 import Auth from './pages/Auth';
 import { getCurrentUser, logout } from './utils/auth';
 import Profile from './pages/Profile';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 function ProgramFormRoute() {
   const { id } = useParams();
@@ -106,6 +108,8 @@ function App() {
         <Route path="/backup" element={<DataBackup />} />
         <Route path="/login" element={<Auth onSuccess={() => setCurrentUser(getCurrentUser())} />} />
         <Route path="/profile" element={<Profile onSuccess={() => setCurrentUser(getCurrentUser())} />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </BrowserRouter>
   );
