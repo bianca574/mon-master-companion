@@ -34,7 +34,7 @@ function ForgotPassword() {
             <h1 style={{ color: 'var(--color-primary)', marginBottom: '1.5rem' }}>Mot de passe oublié</h1>
 
             <form onSubmit={handleSubmit}>
-                <label style={{ display: 'block', marginBottom: '0.3rem' }}>Email</label>
+                <label style={{ display: 'block', marginBottom: '0.5rem' }}>Email</label>
                 <input type="email" style={inputStyle} value={email} onChange={(e) => setEmail(e.target.value)} required />
 
                 {error && <p style={{ color: 'var(--color-status-urgent)', fontSize: '0.85rem' }}>{error}</p>}
@@ -42,13 +42,13 @@ function ForgotPassword() {
 
                 <button
                     type="submit"
-                    style={{ background: 'var(--color-primary)', color: '#fff', border: 'none', borderRadius: 'var(--radius-pill)', padding: '0.6rem 1.2rem', fontWeight: 600, width: '100%' }}
+                    style={{ background: 'var(--color-primary)', color: '#fff', border: 'none', borderRadius: 'var(--radius-pill)', padding: '0.6rem 1.2rem', fontWeight: 600, width: '100%', marginTop: '0.5rem' }}
                 >
                     Envoyer le lien
                 </button>
             </form>
 
-            <p style={{ marginTop: '1rem', fontSize: '0.9rem' }}>
+            <p style={{ marginTop: '1.5rem', fontSize: '0.9rem' }}>
                 <Link to="/login" style={{ color: 'var(--color-primary)' }}>Retour à la connexion</Link>
             </p>
         </div>
