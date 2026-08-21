@@ -42,7 +42,7 @@ function ForgotPassword() {
 
                 <button
                     type="submit"
-                    style={{ background: 'var(--color-primary)', color: '#fff', border: 'none', borderRadius: 'var(--radius-pill)', padding: '0.6rem 1.2rem', fontWeight: 600, width: '100%', marginTop: '0.5rem' }}
+                    style={{ background: 'var(--color-primary)', color: '#fff', border: 'none', borderRadius: 'var(--radius-pill)', padding: '0.6rem 1.2rem', fontWeight: 600, width: '100%', marginTop: '1rem' }}
                 >
                     Envoyer le lien
                 </button>
