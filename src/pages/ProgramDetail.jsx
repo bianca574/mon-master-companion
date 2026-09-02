@@ -136,7 +136,7 @@ function ProgramDetail() {
 
                 {program.documents.map((doc) => (
                     <div key={doc.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.3rem 0' }}>
-                        <input type="checkbox" checked={doc.done} onChange={() => handleToggle(doc.id)} />
+                        <input type="checkbox" checked={doc.done} onChange={() => handleToggle(doc.id)} style={{ accentColor: 'var(--color-primary)' }} />
                         <span style={{ flex: 1, textDecoration: doc.done ? 'line-through' : 'none', color: doc.done ? 'var(--color-text-secondary)' : 'var(--color-text)' }}>
                             {doc.label}
                         </span>
