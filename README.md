@@ -1,4 +1,4 @@
-# MonMaster Companion
+# MonMaster Companion (Août - Septembre 2026)
 
 Application de suivi de candidatures aux masters en France : tableau de bord,
 checklist de documents par candidature, calendrier des échéances, gestionnaire
