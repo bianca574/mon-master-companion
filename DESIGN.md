@@ -9,7 +9,7 @@ release :
   l'expérience utilisateur sans la complexité d'un backend.
 - **V2 — Ajout de fonctionnalités** : gestion des candidatures/documents/lettres de recommandation, tags, journal, calendrier, etc.
 - **V3 — Ajout d'un backend** : API + PostgreSQL + authentification pour la synchronisation multi-appareils.
-- **V4 : Finalisation & Documentation** : réinitialisation du mot de passe, README, DESIGN, LICENSE.
+- **V4 — Finalisation & Documentation** : réinitialisation du mot de passe, README, DESIGN, LICENSE.
 
 ## Structure des pages
 
