@@ -1,9 +1,8 @@
 # MonMaster Companion (Août - Septembre 2026)
 
-Application de suivi de candidatures aux masters en France : tableau de bord,
-checklist de documents par candidature, calendrier des échéances, gestionnaire
-de versions de lettres de motivation avec comparaison, aide à la décision par
-pondération transparente (pas d'IA), journal de candidature, et sauvegarde de données.
+Application de suivi de candidatures aux masters en France : authentification, tableau de bord,
+checklist de documents par candidature, recommandations, calendrier des échéances, gestionnaire
+de versions de lettres de motivation avec comparaison, critères de décision, journal de candidature et sauvegarde de données.
 
 Démo en ligne : https://mon-master-companion.vercel.app
 
